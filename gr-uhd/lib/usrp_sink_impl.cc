@@ -130,7 +130,7 @@ namespace gr {
     usrp_sink_impl::set_center_freq(const ::uhd::tune_request_t tune_request,
                                     size_t chan)
     {
-      _curr_tune_req[chan] = tune_request;
+      _curr_tx_tune_req[chan] = tune_request;
       chan = _stream_args.channels[chan];
       return _dev->set_tx_freq(tune_request, chan);
     }
@@ -138,12 +138,11 @@ namespace gr {
     ::uhd::tune_result_t
     usrp_sink_impl::_set_center_freq_from_internals(size_t chan, pmt::pmt_t direction)
     {
-      _chans_to_tune.reset(chan);
       if (pmt::eqv(direction, ant_direction_rx())) {
         // TODO: what happens if the RX device is not instantiated? Catch error?
-        return _dev->set_rx_freq(_curr_tune_req[chan], _stream_args.channels[chan]);
+        return _dev->set_rx_freq(_curr_rx_tune_req[chan], _stream_args.channels[chan]);
       } else {
-        return _dev->set_tx_freq(_curr_tune_req[chan], _stream_args.channels[chan]);
+        return _dev->set_tx_freq(_curr_tx_tune_req[chan], _stream_args.channels[chan]);
       }
     }
 
@@ -450,7 +449,6 @@ namespace gr {
                          gr_vector_void_star &output_items)
     {
       int ninput_items = noutput_items; //cuz it's a sync block
-
       // default to send a mid-burst packet
       _metadata.start_of_burst = false;
       _metadata.end_of_burst = false;
