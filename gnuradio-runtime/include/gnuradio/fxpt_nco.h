@@ -96,6 +96,19 @@ namespace gr {
       }
     }
 
+    // compute cos and sin for a block of phase angles
+    void sincos(std::complex<int16_t> *output, int noutput_items, double ampl=1.0)
+    {
+      for(int i = 0; i < noutput_items; i++) {
+        output[i] = std::complex<int16_t>(
+          static_cast<int16_t>(round(gr::fxpt::cos(d_phase) * ampl)),
+          static_cast<int16_t>(round(gr::fxpt::sin(d_phase) * ampl))
+        );
+        step();
+      }
+    }
+
+
     // compute sin for a block of phase angles
     void sin(float *output, int noutput_items, double ampl=1.0)
     {
